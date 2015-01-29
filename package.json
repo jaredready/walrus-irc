@@ -1,0 +1,11 @@
+{
+	"name": "Walrus IRC",
+	"main": "views/index.html",
+	"window": {
+		"title": "Walrus IRC",
+		"toolbar": false,
+		"width": 900,
+		"height": 700,
+		"resizable": true
+	}
+}
