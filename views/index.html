@@ -6,36 +6,38 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="../style/stylesheet.css">
 	</head>
-	<body>
+	<body style="padding-top:60px; padding-bottom:60px;">
 		<script src="../javascript/menu.js"></script>
-		<div class="container">
-			<ul class="nav nav-tabs">
-				<li role="presentation" class="active"><a href="#">Freenode</a></li>
-				<li role="presentation"><a href="#">Quakenet</a></li>
-				<li role="presentation"><a href="#">ExampleNet</a></li>
-			</ul>
-		</div>
-
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8">
-					<h3>#example <small>This is the title of channel #example on server irc.example.net<small></h3>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="row">
+					<div class-"col-md-8">
+						<ul class="nav nav-tabs">
+							<li role="presentation" class="active"><a href="#">Freenode</a></li>
+							<li role="presentation"><a href="#">Quakenet</a></li>
+							<li role="presentation"><a href="#">ExampleNet</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-8">
+						<h3>#example <small>This is the title of channel #example on server irc.freenode.net<small></h3>
+					</div>
 				</div>
 			</div>
-		</div>
+		</nav>
 
 		<nav class="navbar navbar-default navbar-fixed-bottom">
-			<div class="container">
-				<div class="row" style="position:absolute; bottom:3;">
+			<div class="container-fluid">
 					<div class="col-md-12">
-						<form class="form-inline">
+						<form class="navbar-form">
 							<div class="form-group">
+								<strong>ResidentBiscuit</strong>
 								<input type="text" class="form-control" id="messageInput" placeholder="Enter your message...">
 							</div>
 							<button type="submit" class="btn btn-default">Send</button>
 						</form>
 					</div>
-				</div>
 			</div>
 		</nav>
 		
