@@ -1,0 +1,13 @@
+ul, li { 
+	margin: 0px; 
+	margin-left: 5px;
+	padding: 0px; 
+}
+
+table {
+	width: auto !important;
+}
+
+.message-nick {
+	text-align: right;
+}
