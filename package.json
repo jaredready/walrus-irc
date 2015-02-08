@@ -3,7 +3,7 @@
 	"main": "views/index.html",
 	"window": {
 		"title": "Walrus IRC",
-		"toolbar": false,
+		"toolbar": true,
 		"width": 900,
 		"height": 700,
 		"resizable": true

@@ -4,10 +4,19 @@ ul, li {
 	padding: 0px; 
 }
 
-table {
-	width: auto !important;
+.message-timestamp {
+    width: auto;
+    white-space: nowrap;
 }
-
 .message-nick {
-	text-align: right;
+    width: auto;
+    white-space: nowrap;
+}
+.message-text {
+    width: 100%;
+}
+.messages tbody {
+	height: 500px;
+	overflow: auto;
+	display: block;
 }
