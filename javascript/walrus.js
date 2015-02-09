@@ -1,4 +1,5 @@
 var log = require('winston');
+var moment = require('moment');
 var IRClient = require('irc').Client;
 
 var clientConfig = {
@@ -11,7 +12,7 @@ var clientConfig = {
 	showErrors: false,
 	autoRejoin: false,
 	autoConnect: false,
-	channels: ['#cplusplus.com'],
+	channels: ['#botdever'],
 	secure: false,
 	selfSigned: false,
 	certExpired: false,
@@ -24,6 +25,24 @@ var clientConfig = {
 };
 
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
+
+client.addListener('message', function(nick, to, text) {
+	var message_table = document.getElementById('messageTable');
+	var message_row = message_table.insertRow(-1);
+	var timestamp = moment();
+
+	var timestamp_cell = message_row.insertCell(0);
+	timestamp_cell.classList.add('message-timestamp');
+	timestamp_cell.innerHTML = '1/1/2015 13:31:55';
+
+	var from_cell = message_row.insertCell(1);
+	from_cell.classList.add('message-nick');
+	from_cell.innerHTML = nick;
+
+	var message_cell = message_row.insertCell(2);
+	message_cell.classList.add('message-text');
+	message_cell.innerHTML = text;
+});
 
 client.addListener('raw', function(message) {
 	log.info(message);

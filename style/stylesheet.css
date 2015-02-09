@@ -4,6 +4,10 @@ ul, li {
 	padding: 0px; 
 }
 
+#messageTable {
+	float:left;
+	width:74%;
+}
 .message-timestamp {
     width: auto;
     white-space: nowrap;
@@ -11,12 +15,24 @@ ul, li {
 .message-nick {
     width: auto;
     white-space: nowrap;
+    text-align: right;
+    border-right: 1px solid #ddd;
 }
 .message-text {
     width: 100%;
 }
-.messages tbody {
+#messageTable tbody {
+	font-size: 85%;
 	height: 500px;
 	overflow: auto;
 	display: block;
+}
+
+#channelAccordion {
+	width:25%;
+	float:right;
+}
+
+#messageInput {
+	width:50%;
 }
