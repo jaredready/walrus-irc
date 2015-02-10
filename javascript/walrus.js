@@ -44,6 +44,17 @@ client.addListener('message', function(nick, to, text) {
 	message_cell.innerHTML = text;
 });
 
+client.addListener('names', function(channel, nicks){
+	var channel_panel = document.getElementById('botdever-panel');
+	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
+	Object.keys(nicks).forEach(function(nick) {
+		log.info(nick);
+		var user = document.createElement("li");
+		user.appendChild(document.createTextNode(nick));
+		channel_user_list.appendChild(user);
+	});
+});
+
 client.addListener('raw', function(message) {
 	log.info(message);
 });
