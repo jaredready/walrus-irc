@@ -1,7 +1,14 @@
-ul, li { 
-	margin: 0px; 
-	margin-left: 5px;
-	padding: 0px; 
+.channel-div {
+	max-height:85vh;
+	overflow-y: auto;
+	font-size: 90%;
+}
+
+.channel-user-list-div {
+	padding: 0px;
+	max-height: 75vh;
+	overflow-y: auto;
+	font-size: 85%;
 }
 
 #messageTable {
@@ -23,7 +30,6 @@ ul, li {
 }
 #messageTable tbody {
 	font-size: 85%;
-	height: 500px;
 	overflow: auto;
 	display: block;
 }
@@ -35,4 +41,23 @@ ul, li {
 
 #messageInput {
 	width:50%;
+}
+
+.panel-heading {
+    padding: 5px 15px;
+}
+
+.panel-footer {
+	padding: 1px 15px;
+	color: #A0A0A0;
+}
+
+.profile-img {
+	width: 96px;
+	height: 96px;
+	margin: 0 auto 10px;
+	display: block;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
 }

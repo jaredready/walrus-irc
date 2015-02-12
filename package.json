@@ -1,6 +1,6 @@
 {
   "name": "WalrusIRC",
-  "main": "views/index.html",
+  "main": "views/login.html",
   "window": {
     "title": "Walrus IRC",
     "toolbar": true,
