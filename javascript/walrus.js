@@ -1,3 +1,5 @@
+var entry = require('../javascript/db.js');
+
 var log = require('winston');
 var moment = require('moment');
 var IRClient = require('irc').Client;
@@ -12,7 +14,7 @@ var clientConfig = {
 	showErrors: false,
 	autoRejoin: false,
 	autoConnect: false,
-	channels: ['#botdever'],
+	channels: [],
 	secure: false,
 	selfSigned: false,
 	certExpired: false,
@@ -26,11 +28,14 @@ var clientConfig = {
 
 var channel_map = new Map();
 channel_map.set("#botdever", 0);
-channel_map.set("#cplusplus.com", 1);
+var current_channel_id = 1;
 
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
 client.addListener('message', function(nick, to, text) {
+	var msg = new entry.message({ nick: nick, channel: to, message: text, time: +new Date() });
+	msg.save();
+
 	var message_table = document.getElementById('messageTable');
 	var message_row = message_table.insertRow(-1);
 
@@ -48,12 +53,22 @@ client.addListener('message', function(nick, to, text) {
 });
 
 client.addListener('names', function(channel, nicks){
-	log.info(channel);
 	var channel_num = channel_map.get(channel);
 	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
 	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
 	log.info(nicks);
 	Object.keys(nicks).forEach(function(nick) {
+		entry.user.findOne({ server: 'Freenode', channel: channel, nick: nick }, function(error, user_found) {
+			if (error) {
+				throw error;
+			}
+
+			if (!user_found) {
+				var user_ = new entry.user({ server: 'Freenode', channel: channel, user: nick });
+				user_.save();
+			}
+		});
+
 		var user = document.createElement('a');
 		user.classList.add('list-group-item');
 		user.href = '#';
@@ -74,10 +89,17 @@ client.addListener('names', function(channel, nicks){
 });
 
 client.addListener('join', function(channel, nick, message){
-	if(nick === clientConfig.userName) {
-		//We joined a new channel, so we need to add a new channel pane
-		
-	}
+	entry.user.findOne({ server: 'Freenode', channel: channel, user: nick }, function(error, user_found) {
+		if (error) {
+			throw error;
+		}
+
+		if (!user_found) {
+			var user_ = new entry.user({ server: 'Freenode', channel: channel, user: nick });
+			user_.save();
+		}
+	});
+
 	var message_table = document.getElementById('messageTable');
 	var message_row = message_table.insertRow(-1);
 
@@ -131,8 +153,15 @@ document.getElementById('messageForm').addEventListener('submit', function(ev){
 
 function process_outbound_message(msg) {
 	if(msg.startsWith('/j') || msg.startsWith('/join')) {
-		client.join(msg.split(' ')[1], function(){
-			log.info('Joined channel ' + msg.split(' ')[1]);
+		//Need to create new channel pane. This is kind of a mess.
+		var channel = msg.split(' ')[1];
+
+		var new_panel =	channel_panel_factory('freenode', channel);
+		var channel_accordion = document.getElementById('channelAccordion');
+		channel_accordion.appendChild(new_panel);
+
+		client.join(channel, function(){
+			log.info('Joined channel ' + channel);
 		});
 		return;
 	}
@@ -155,6 +184,82 @@ function process_outbound_message(msg) {
 
 	return;
 };
+
+function channel_panel_factory(server, channel){
+	/**
+	var new_panel =	'<div class="panel panel-default">
+						    <div class="panel-heading" role="tab" id="freenode-'+channel+'">
+						      <h4 class="panel-title">
+						        <a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel">
+						          '+channel'
+						        </a>
+						        <span class="badge" id="'+channel'-unread">6</span>
+						        <a href="#">
+						        	<span class="glyphicon glyphicon-remove-circle" style="float:right;"></span>
+					        	</a>
+						      </h4>
+						    </div>
+						    <div id="channel'+channel_id'-server0-panel" class="panel-collapse collapse in" role="tabpanel">
+						      <div class="panel-body channel-user-list-div">
+						      	<div class="channel-user-list list-group">
+						      		
+						      	</div>
+						      </div>
+						    </div>
+						  </div>
+						</div>';
+	**/
+
+	channel_map.set(channel, current_channel_id++)
+	var channel_id = channel_map.get(channel);
+
+	var panel = document.createElement('div');
+	panel.classList.add('panel', 'panel-default');
+
+	var panel_heading = document.createElement('div');
+	panel_heading.classList.add('panel-heading');
+	panel_heading.id = server + '-' +  channel;
+
+	var panel_title = document.createElement('h4');
+	panel_title.classList.add('panel-title');
+
+	var channel_anchor = '<a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel">'+channel+'</a>'
+
+	var unread_span = document.createElement('span');
+	unread_span.classList.add('badge');
+	unread_span.id = channel + '-unread';
+
+	var part_button = document.createElement('a');
+	part_button.href = '#';
+	var part_button_icon = document.createElement('span');
+	part_button_icon.classList.add('glyphicon', 'glyphicon-remove-circle');
+	part_button_icon.style.float = 'right';
+
+	var panel_collapse = document.createElement('div');
+	panel_collapse.classList.add('panel-collapse', 'collapse');
+	panel_collapse.id = 'channel' + channel_id + '-server0-panel';
+
+	var panel_body = document.createElement('div');
+	panel_body.classList.add('panel-body', 'channel-user-list-div');
+
+	var channel_user_list = document.createElement('div');
+	channel_user_list.classList.add('channel-user-list', 'list-group');
+
+	//Time to wire these all together
+	panel.appendChild(panel_heading);
+
+	panel_heading.appendChild(panel_title);
+	panel_title.innerHTML = channel_anchor;
+	panel_title.appendChild(unread_span);
+	panel_title.appendChild(part_button);
+	part_button.appendChild(part_button_icon);
+
+	panel.appendChild(panel_collapse);
+	panel_collapse.appendChild(panel_body);
+	panel_body.appendChild(channel_user_list);
+
+	return panel;
+}
 
 client.addListener('raw', function(message) {
 	log.info(message);

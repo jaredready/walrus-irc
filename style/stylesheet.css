@@ -1,5 +1,5 @@
 .channel-div {
-	max-height:85vh;
+	max-height: 85vh;
 	overflow-y: auto;
 	font-size: 90%;
 }
@@ -27,8 +27,10 @@
 }
 .message-text {
     width: 100%;
+    word-break: break-all;
 }
 #messageTable tbody {
+	max-height: 85vh;
 	font-size: 85%;
 	overflow: auto;
 	display: block;
