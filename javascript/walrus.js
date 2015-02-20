@@ -29,6 +29,7 @@ var clientConfig = {
 var channel_map = new Map();
 channel_map.set("#botdever", 0);
 var current_channel_id = 1;
+var channelContext = "";
 
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
@@ -160,12 +161,24 @@ function process_outbound_message(msg) {
 		var channel_accordion = document.getElementById('channelAccordion');
 		channel_accordion.appendChild(new_panel);
 
-		client.join(channel, function(){
+		client.join(channel, function(error){
+			if(error) {
+				throw error;
+			}
 			log.info('Joined channel ' + channel);
 		});
 		return;
 	}
-	client.say('#botdever', msg);
+	if((msg.startsWith('/n') || msg.startsWith('/nick')) && msg.split(' ').length == 2) {
+		client.send('NICK', msg.split(' ')[1]);
+		log.info('Changed nick to: ' + msg.split(' ')[1]);
+		return;
+	}
+
+	var messasge = new entry.message({ nick: clientConfig.userName, channel: channelContext, message: msg, time: +new Date() });
+	messasge.save();
+
+	client.say(channelContext, msg);
 
 	var message_table = document.getElementById('messageTable');
 	var message_row = message_table.insertRow(-1);
@@ -223,7 +236,7 @@ function channel_panel_factory(server, channel){
 	var panel_title = document.createElement('h4');
 	panel_title.classList.add('panel-title');
 
-	var channel_anchor = '<a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel">'+channel+'</a>'
+	var channel_anchor = '<a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel" onclick="changeChannelContext(this)">'+channel+'</a>'
 
 	var unread_span = document.createElement('span');
 	unread_span.classList.add('badge');
@@ -259,6 +272,34 @@ function channel_panel_factory(server, channel){
 	panel_body.appendChild(channel_user_list);
 
 	return panel;
+}
+
+function changeChannelContext(caller) {
+	log.info('Change context to: ' + caller.text);
+	channelContext = caller.text;
+	entry.message.find({ channel: caller.text }, function(error, cursor){
+		if(error) {
+			throw error;
+		}
+		// Wipe out table, replace messages with messages in this context
+		document.getElementById('messageTable').innerHTML = "";
+		cursor.forEach(function(message){
+			var message_table = document.getElementById('messageTable');
+			var message_row = message_table.insertRow(-1);
+
+			var timestamp_cell = message_row.insertCell(0);
+			timestamp_cell.classList.add('message-timestamp');
+			timestamp_cell.innerHTML = moment(message.time).format('L HH:mm:ss');
+
+			var from_cell = message_row.insertCell(1);
+			from_cell.classList.add('message-nick');
+			from_cell.innerHTML = message.nick;
+
+			var message_cell = message_row.insertCell(2);
+			message_cell.classList.add('message-text');
+			message_cell.innerHTML = message.message;
+		});
+	});
 }
 
 client.addListener('raw', function(message) {
