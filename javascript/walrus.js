@@ -37,27 +37,30 @@ client.addListener('message', function(nick, to, text) {
 	var msg = new entry.message({ nick: nick, channel: to, message: text, time: +new Date() });
 	msg.save();
 
-	var message_table = document.getElementById('messageTable');
-	var message_row = message_table.insertRow(-1);
+	if(to === channelContext) {
+		var message_table = document.getElementById('messageTable');
+		var message_row = message_table.insertRow(-1);
 
-	var timestamp_cell = message_row.insertCell(0);
-	timestamp_cell.classList.add('message-timestamp');
-	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
+		var timestamp_cell = message_row.insertCell(0);
+		timestamp_cell.classList.add('message-timestamp');
+		timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
 
-	var from_cell = message_row.insertCell(1);
-	from_cell.classList.add('message-nick');
-	from_cell.innerHTML = nick;
+		var from_cell = message_row.insertCell(1);
+		from_cell.classList.add('message-nick');
+		from_cell.innerHTML = nick;
 
-	var message_cell = message_row.insertCell(2);
-	message_cell.classList.add('message-text');
-	message_cell.innerHTML = text;
+		var message_cell = message_row.insertCell(2);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = text;
+
+		scrollMessagesToBottom();
+	}
 });
 
 client.addListener('names', function(channel, nicks){
 	var channel_num = channel_map.get(channel);
 	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
 	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
-	log.info(nicks);
 	Object.keys(nicks).forEach(function(nick) {
 		entry.user.findOne({ server: 'Freenode', channel: channel, nick: nick }, function(error, user_found) {
 			if (error) {
@@ -117,6 +120,8 @@ client.addListener('join', function(channel, nick, message){
 	var message_cell = message_row.insertCell(2);
 	message_cell.classList.add('message-text');
 	message_cell.innerHTML = nick + ' has joined';
+
+	scrollMessagesToBottom();
 });
 
 client.addListener('part', function(channel, nick, reason, message){
@@ -136,18 +141,18 @@ client.addListener('part', function(channel, nick, reason, message){
 	var message_cell = message_row.insertCell(2);
 	message_cell.classList.add('message-text');
 	message_cell.innerHTML = nick + ' has left. (' + reason + ')';
+
+	scrollMessagesToBottom();
 });
 
 document.getElementById('message-button').addEventListener('click', function(){
-	var message = document.getElementById('messageInput');
-	process_outbound_message(message.value);
-	message.value = "";
+	process_outbound_message(document.getElementById('messageInput').value);
+	document.getElementById('messageInput').value = "";
 });
 
 document.getElementById('messageForm').addEventListener('submit', function(ev){
-	var message = document.getElementById('messageInput');
-	process_outbound_message(message.value);
-	message.value = "";
+	process_outbound_message(document.getElementById('messageInput').value);
+	document.getElementById('messageInput').value = "";
 
 	ev.preventDefault();
 });
@@ -160,6 +165,8 @@ function process_outbound_message(msg) {
 		var new_panel =	channel_panel_factory('freenode', channel);
 		var channel_accordion = document.getElementById('channelAccordion');
 		channel_accordion.appendChild(new_panel);
+		
+		changeChannelContext(channel);
 
 		client.join(channel, function(error){
 			if(error) {
@@ -195,6 +202,7 @@ function process_outbound_message(msg) {
 	message_cell.classList.add('message-text');
 	message_cell.innerHTML = msg;
 
+	scrollMessagesToBottom();
 	return;
 };
 
@@ -236,7 +244,7 @@ function channel_panel_factory(server, channel){
 	var panel_title = document.createElement('h4');
 	panel_title.classList.add('panel-title');
 
-	var channel_anchor = '<a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel" onclick="changeChannelContext(this)">'+channel+'</a>'
+	var channel_anchor = '<a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel" onclick="changeChannelContext(this.text)">'+channel+'</a>'
 
 	var unread_span = document.createElement('span');
 	unread_span.classList.add('badge');
@@ -274,10 +282,10 @@ function channel_panel_factory(server, channel){
 	return panel;
 }
 
-function changeChannelContext(caller) {
-	log.info('Change context to: ' + caller.text);
-	channelContext = caller.text;
-	entry.message.find({ channel: caller.text }, function(error, cursor){
+function changeChannelContext(channel) {
+	log.info('Change context to: ' + channel);
+	channelContext = channel;
+	entry.message.find({ channel: channel }, function(error, cursor){
 		if(error) {
 			throw error;
 		}
@@ -298,8 +306,14 @@ function changeChannelContext(caller) {
 			var message_cell = message_row.insertCell(2);
 			message_cell.classList.add('message-text');
 			message_cell.innerHTML = message.message;
+
+			scrollMessagesToBottom();
 		});
 	});
+}
+
+function scrollMessagesToBottom() {
+	document.getElementById('messageTable').childNodes[0].scrollTop = document.getElementById('messageTable').childNodes[0].scrollHeight;
 }
 
 client.addListener('raw', function(message) {
