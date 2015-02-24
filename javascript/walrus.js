@@ -145,6 +145,21 @@ client.addListener('part', function(channel, nick, reason, message){
 	scrollMessagesToBottom();
 });
 
+client.addListener('motd', function(motd){
+	var message_table = document.getElementById('messageTable');
+
+	motd.split('\n').forEach(function(line){
+		var message_row = message_table.insertRow(-1);
+		var timestamp_cell = message_row.insertCell(0);
+		timestamp_cell.classList.add('message-timestamp');
+		timestamp_cell.innerHTML = moment().format('L HH:mm');
+
+		var message_cell = message_row.insertCell(1);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = line;
+	});
+});
+
 document.getElementById('message-button').addEventListener('click', function(){
 	process_outbound_message(document.getElementById('messageInput').value);
 	document.getElementById('messageInput').value = "";
@@ -178,6 +193,7 @@ function process_outbound_message(msg) {
 	}
 	if((msg.startsWith('/n') || msg.startsWith('/nick')) && msg.split(' ').length == 2) {
 		client.send('NICK', msg.split(' ')[1]);
+		document.getElementById('clientNick').innerHTML = msg.split(' ')[1];
 		log.info('Changed nick to: ' + msg.split(' ')[1]);
 		return;
 	}
@@ -313,6 +329,7 @@ function changeChannelContext(channel) {
 }
 
 function scrollMessagesToBottom() {
+	log.info('Scrolling messages');
 	document.getElementById('messageTable').childNodes[0].scrollTop = document.getElementById('messageTable').childNodes[0].scrollHeight;
 }
 
