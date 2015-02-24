@@ -20,22 +20,12 @@ client.addListener('message', function(nick, to, text) {
 	msg.save();
 
 	if(to === channelContext) {
-		var message_table = document.getElementById('messageTable');
-		var message_row = message_table.insertRow(-1);
+		var msg = {
+			"nick": nick,
+			"text": text
+		};
 
-		var timestamp_cell = message_row.insertCell(0);
-		timestamp_cell.classList.add('message-timestamp');
-		timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
-
-		var from_cell = message_row.insertCell(1);
-		from_cell.classList.add('message-nick');
-		from_cell.innerHTML = nick;
-
-		var message_cell = message_row.insertCell(2);
-		message_cell.classList.add('message-text');
-		message_cell.innerHTML = text;
-
-		scrollMessagesToBottom();
+		display_message(msg, 'message');
 	}
 });
 
@@ -86,66 +76,32 @@ client.addListener('join', function(channel, nick, message){
 		}
 	});
 
-	var message_table = document.getElementById('messageTable');
-	var message_row = message_table.insertRow(-1);
+	var msg = {
+		"nick": nick,
+		"message": message
+	};
 
-	var timestamp_cell = message_row.insertCell(0);
-	timestamp_cell.classList.add('message-timestamp');
-	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
-
-	var from_cell = message_row.insertCell(1);
-	from_cell.classList.add('message-nick');
-	var join_icon = document.createElement('span');
-	join_icon.classList.add('glyphicon', 'glyphicon-arrow-right');
-	from_cell.appendChild(join_icon);
-
-	var message_cell = message_row.insertCell(2);
-	message_cell.classList.add('message-text');
-	message_cell.innerHTML = nick + ' has joined';
-
-	scrollMessagesToBottom();
+	display_message(msg, 'join');
 });
 
 client.addListener('part', function(channel, nick, reason, message){
-	var message_table = document.getElementById('messageTable');
-	var message_row = message_table.insertRow(-1);
+	var msg = {
+		"nick": nick,
+		"reason": reason,
+		"message": message
+	};
 
-	var timestamp_cell = message_row.insertCell(0);
-	timestamp_cell.classList.add('message-timestamp');
-	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
-
-	var from_cell = message_row.insertCell(1);
-	from_cell.classList.add('message-nick');
-	var join_icon = document.createElement('span');
-	join_icon.classList.add('glyphicon', 'glyphicon-arrow-left');
-	from_cell.appendChild(join_icon);
-
-	var message_cell = message_row.insertCell(2);
-	message_cell.classList.add('message-text');
-	message_cell.innerHTML = nick + ' has left. (' + reason + ')';
-
-	scrollMessagesToBottom();
+	display_message(msg, 'part');
 });
 
 client.addListener('quit', function(nick, reason, channels, message){
-	var message_table = document.getElementById('messageTable');
-	var message_row = message_table.insertRow(-1);
+	var msg = {
+		"nick": nick,
+		"reason": reason,
+		"message": message
+	};
 
-	var timestamp_cell = message_row.insertCell(0);
-	timestamp_cell.classList.add('message-timestamp');
-	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
-
-	var from_cell = message_row.insertCell(1);
-	from_cell.classList.add('message-nick');
-	var join_icon = document.createElement('span');
-	join_icon.classList.add('glyphicon', 'glyphicon-arrow-left');
-	from_cell.appendChild(join_icon);
-
-	var message_cell = message_row.insertCell(2);
-	message_cell.classList.add('message-text');
-	message_cell.innerHTML = nick + ' has left. (' + reason + ')';
-
-	scrollMessagesToBottom();
+	display_message(msg, 'quit');
 });
 
 client.addListener('motd', function(motd){
@@ -175,8 +131,52 @@ document.getElementById('messageForm').addEventListener('submit', function(ev){
 	ev.preventDefault();
 });
 
+function display_message(msg, type) {
+	if(msg.length === 0) return;
+
+	var message_table = document.getElementById('messageTable');
+	var message_row = message_table.insertRow(-1);
+
+	var timestamp_cell = message_row.insertCell(0);
+	timestamp_cell.classList.add('message-timestamp');
+	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
+
+	if(type === 'message') {
+		var from_cell = message_row.insertCell(1);
+		from_cell.classList.add('message-nick');
+		from_cell.innerHTML = msg.nick;
+
+		var message_cell = message_row.insertCell(2);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = msg.text;
+	}
+	else if(type === 'part'|| type === 'quit') {
+		var from_cell = message_row.insertCell(1);
+		from_cell.classList.add('message-nick');
+		var part_icon = document.createElement('span');
+		part_icon.classList.add('glyphicon', 'glyphicon-arrow-left');
+		from_cell.appendChild(part_icon);
+
+		var message_cell = message_row.insertCell(2);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = msg.nick + ' has left. (' + msg.reason + ')';
+	}
+	else if(type === 'join') {
+		var from_cell = message_row.insertCell(1);
+		from_cell.classList.add('message-nick');
+		var join_icon = document.createElement('span');
+		join_icon.classList.add('glyphicon', 'glyphicon-arrow-right');
+		from_cell.appendChild(join_icon);
+
+		var message_cell = message_row.insertCell(2);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = msg.nick + ' has joined.';
+	}
+
+	scrollMessagesToBottom();
+}
+
 function process_outbound_message(msg) {
-	log.info(msg);
 	if(msg.startsWith('/j') || msg.startsWith('/join')) {
 		//Need to create new channel pane. This is kind of a mess.
 		var channel = msg.split(' ')[1];
