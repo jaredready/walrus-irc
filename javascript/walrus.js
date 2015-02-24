@@ -10,8 +10,7 @@ var IRClient = require('irc').Client;
 var clientConfig = JSON.parse(fs.readFileSync(path.join(dirname, '../conf/client.json'), 'utf8'));
 
 var channel_map = new Map();
-channel_map.set("#botdever", 0);
-var current_channel_id = 1;
+var current_channel_id = 0;
 var channelContext = "";
 
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
@@ -108,6 +107,27 @@ client.addListener('join', function(channel, nick, message){
 });
 
 client.addListener('part', function(channel, nick, reason, message){
+	var message_table = document.getElementById('messageTable');
+	var message_row = message_table.insertRow(-1);
+
+	var timestamp_cell = message_row.insertCell(0);
+	timestamp_cell.classList.add('message-timestamp');
+	timestamp_cell.innerHTML = moment().format('L HH:mm:ss');
+
+	var from_cell = message_row.insertCell(1);
+	from_cell.classList.add('message-nick');
+	var join_icon = document.createElement('span');
+	join_icon.classList.add('glyphicon', 'glyphicon-arrow-left');
+	from_cell.appendChild(join_icon);
+
+	var message_cell = message_row.insertCell(2);
+	message_cell.classList.add('message-text');
+	message_cell.innerHTML = nick + ' has left. (' + reason + ')';
+
+	scrollMessagesToBottom();
+});
+
+client.addListener('quit', function(nick, reason, channels, message){
 	var message_table = document.getElementById('messageTable');
 	var message_row = message_table.insertRow(-1);
 
