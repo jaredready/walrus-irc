@@ -1,3 +1,5 @@
+require('../javascript/foo.js');
+
 var entry = require('../javascript/db.js');
 
 var log = require('winston');
