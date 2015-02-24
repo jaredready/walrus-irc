@@ -1,30 +1,13 @@
 var entry = require('../javascript/db.js');
 
 var log = require('winston');
+var fs = require('fs');
+var path = require('path');
+var dirname = require('../javascript/utils.js').dirname;
 var moment = require('moment');
 var IRClient = require('irc').Client;
 
-var clientConfig = {
-	server: 'irc.freenode.net',
-	userName: 'ResidentWalrus',
-	realName: 'ResidentBiscuit',
-	password: 'jared41392',
-	port: 6667,
-	debug: false,
-	showErrors: false,
-	autoRejoin: false,
-	autoConnect: false,
-	channels: [],
-	secure: false,
-	selfSigned: false,
-	certExpired: false,
-	floodProtection: false,
-	floodProtectionDelay: 1000,
-	sasl: false,
-	stripColors: false,
-	channelPrefixes: "&#",
-	messageSplit: 512
-};
+var clientConfig = JSON.parse(fs.readFileSync(path.join(dirname, '../conf/client.json'), 'utf8'));
 
 var channel_map = new Map();
 channel_map.set("#botdever", 0);
@@ -173,6 +156,7 @@ document.getElementById('messageForm').addEventListener('submit', function(ev){
 });
 
 function process_outbound_message(msg) {
+	log.info(msg);
 	if(msg.startsWith('/j') || msg.startsWith('/join')) {
 		//Need to create new channel pane. This is kind of a mess.
 		var channel = msg.split(' ')[1];

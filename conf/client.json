@@ -1,0 +1,21 @@
+{
+	"server": "irc.freenode.net",
+	"userName": "ResidentWalrus",
+	"realName": "ResidentBiscuit",
+	"password": "jared41392",
+	"port": 6667,
+	"debug": false,
+	"showErrors": false,
+	"autoRejoin": false,
+	"autoConnect": false,
+	"channels": [],
+	"secure": false,
+	"selfSigned": false,
+	"certExpired": false,
+	"floodProtection": false,
+	"floodProtectionDelay": 1000,
+	"sasl": false,
+	"stripColors": false,
+	"channelPrefixes": "$#",
+	"messageSplit": 512
+}
