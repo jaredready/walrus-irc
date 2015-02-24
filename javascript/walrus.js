@@ -30,9 +30,6 @@ client.addListener('message', function(nick, to, text) {
 });
 
 client.addListener('names', function(channel, nicks){
-	var channel_num = channel_map.get(channel);
-	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
-	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
 	Object.keys(nicks).forEach(function(nick) {
 		entry.user.findOne({ server: 'Freenode', channel: channel, nick: nick }, function(error, user_found) {
 			if (error) {
@@ -45,22 +42,7 @@ client.addListener('names', function(channel, nicks){
 			}
 		});
 
-		var user = document.createElement('a');
-		user.classList.add('list-group-item');
-		user.href = '#';
-
-		if(nicks[nick] === '@') {
-			var glyphiconSpan = document.createElement('span');
-			glyphiconSpan.classList.add('glyphicon', 'glyphicon-exclamation-sign');
-		}
-		else {
-			var glyphiconSpan = document.createElement('span');
-			glyphiconSpan.classList.add('glyphicon', 'glyphicon-user');
-		}
-
-		user.appendChild(glyphiconSpan);
-		user.appendChild(document.createTextNode(" " + nick));
-		channel_user_list.appendChild(user);
+		add_nick_to_channel(nick, false, false, channel);
 	});
 });
 
@@ -76,20 +58,10 @@ client.addListener('join', function(channel, nick, message){
 		}
 	});
 
-	var channel_num = channel_map.get(channel);
-	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
-	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
-
-	var user = document.createElement('a');
-	user.classList.add('list-group-item');
-	user.href = '#';
-
-	var glyphiconSpan = document.createElement('span');
-	glyphiconSpan.classList.add('glyphicon', 'glyphicon-user');
-
-	user.appendChild(glyphiconSpan);
-	user.appendChild(document.createTextNode(" " + nick));
-	channel_user_list.appendChild(user);
+	//We get added on the 'names' listener already
+	if(nick !== clientConfig.userName) {
+		add_nick_to_channel(nick, false, false, channel);
+	}
 
 	var msg = {
 		"nick": nick,
@@ -106,6 +78,7 @@ client.addListener('part', function(channel, nick, reason, message){
 		"message": message
 	};
 
+	remove_nick_from_channel(nick, channel);
 	display_message(msg, 'part');
 });
 
@@ -145,6 +118,37 @@ document.getElementById('messageForm').addEventListener('submit', function(ev){
 
 	ev.preventDefault();
 });
+
+function add_nick_to_channel(nick, op, voice, channel) {
+	var channel_num = channel_map.get(channel);
+	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
+	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
+
+	var user = document.createElement('a');
+	user.classList.add('list-group-item');
+	user.href = '#';
+
+	var glyphiconSpan = document.createElement('span');
+	glyphiconSpan.classList.add('glyphicon', 'glyphicon-user');
+
+	user.appendChild(glyphiconSpan);
+	user.appendChild(document.createTextNode(" " + nick));
+	channel_user_list.appendChild(user);
+}
+
+function remove_nick_from_channel(nick, channel) {
+	var channel_num = channel_map.get(channel);
+	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
+	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
+
+	var user_array = channel_user_list.childNodes;
+
+	for(var i = 0; i < user_array.length; i++) {
+		if(user_array[i].text == ' ' + nick) {
+			user_array[i].remove();
+		}
+	}
+}
 
 function display_message(msg, type) {
 	if(msg.length === 0) return;
