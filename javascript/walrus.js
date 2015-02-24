@@ -76,6 +76,21 @@ client.addListener('join', function(channel, nick, message){
 		}
 	});
 
+	var channel_num = channel_map.get(channel);
+	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
+	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
+
+	var user = document.createElement('a');
+	user.classList.add('list-group-item');
+	user.href = '#';
+
+	var glyphiconSpan = document.createElement('span');
+	glyphiconSpan.classList.add('glyphicon', 'glyphicon-user');
+
+	user.appendChild(glyphiconSpan);
+	user.appendChild(document.createTextNode(" " + nick));
+	channel_user_list.appendChild(user);
+
 	var msg = {
 		"nick": nick,
 		"message": message
