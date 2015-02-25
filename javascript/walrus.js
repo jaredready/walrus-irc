@@ -352,13 +352,16 @@ function changeChannelContext(channel) {
 }
 
 function scrollMessagesToBottom() {
-	log.info('Scrolling messages');
 	document.getElementById('messageTable').childNodes[0].scrollTop = document.getElementById('messageTable').childNodes[0].scrollHeight;
 }
 
 client.addListener('raw', function(message) {
 	log.info(message);
 });
+
+client.addListener('error', function(message){
+	log.error('error: ' + message);
+})
 
 client.connect(0, function() {
 	log.info('Connected to "%s".', clientConfig.server);
