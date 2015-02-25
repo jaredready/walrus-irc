@@ -221,8 +221,8 @@ function process_outbound_message(msg) {
 		return;
 	}
 
-	var messasge = new entry.message({ nick: clientConfig.userName, channel: channelContext, message: msg, time: +new Date() });
-	messasge.save();
+	var message = new entry.message({ nick: clientConfig.userName, channel: channelContext, message: msg, time: +new Date() });
+	message.save();
 
 	client.say(channelContext, msg);
 
@@ -246,7 +246,7 @@ function process_outbound_message(msg) {
 };
 
 function channel_panel_factory(server, channel){
-	/**
+	/** This is kind of the structure of the channel panels
 	var new_panel =	'<div class="panel panel-default">
 						    <div class="panel-heading" role="tab" id="freenode-'+channel+'">
 						      <h4 class="panel-title">
@@ -355,13 +355,9 @@ function scrollMessagesToBottom() {
 	document.getElementById('messageTable').childNodes[0].scrollTop = document.getElementById('messageTable').childNodes[0].scrollHeight;
 }
 
-client.addListener('raw', function(message) {
-	log.info(message);
-});
-
 client.addListener('error', function(message){
 	log.error('error: ' + message);
-})
+});
 
 client.connect(0, function() {
 	log.info('Connected to "%s".', clientConfig.server);
