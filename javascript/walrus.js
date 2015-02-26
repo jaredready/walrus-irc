@@ -19,6 +19,10 @@ client.addListener('message', function(nick, to, text) {
 	var msg = new entry.message({ nick: nick, channel: to, message: text, time: +new Date() });
 	msg.save();
 
+	if(to === clientConfig.userName) {
+
+	}
+
 	if(to === channelContext) {
 		var msg = {
 			"nick": nick,
@@ -68,7 +72,9 @@ client.addListener('join', function(channel, nick, message){
 		"message": message
 	};
 
-	display_message(msg, 'join');
+	if(channel === channelContext) {
+		display_message(msg, 'join');
+	}
 });
 
 client.addListener('part', function(channel, nick, reason, message){
@@ -79,7 +85,10 @@ client.addListener('part', function(channel, nick, reason, message){
 	};
 
 	remove_nick_from_channel(nick, channel);
-	display_message(msg, 'part');
+
+	if(channel === channelContext) {
+		display_message(msg, 'part');
+	}
 });
 
 client.addListener('quit', function(nick, reason, channels, message){
@@ -89,7 +98,12 @@ client.addListener('quit', function(nick, reason, channels, message){
 		"message": message
 	};
 
-	display_message(msg, 'quit');
+	channels.forEach(function(channel) {
+		remove_nick_from_channel(nick, channel);
+	});
+	if(channels.indexOf(channelContext) !== -1) {
+		display_message(msg, 'quit');
+	}
 });
 
 client.addListener('motd', function(motd){
@@ -107,6 +121,24 @@ client.addListener('motd', function(motd){
 	});
 });
 
+client.addListener('nick', function(oldnick, newnick, channels, message){
+	if(oldnick === clientConfig.userName) {
+		clientConfig.userName = newnick;
+	}
+	channels.forEach(function(channel){
+		if(clientConfig.channels.indexOf(channel) !== -1) {
+			remove_nick_from_channel(oldnick, channel);
+			add_nick_to_channel(newnick, false, false, channel);
+		}
+		if(channel === channelContext){
+			var msg = {
+				"text": oldnick + ' is now knows as ' + newnick
+			}
+			display_message(msg, 'nick');
+		}
+	});
+});
+
 document.getElementById('message-button').addEventListener('click', function(){
 	process_outbound_message(document.getElementById('messageInput').value);
 	document.getElementById('messageInput').value = "";
@@ -119,7 +151,7 @@ document.getElementById('messageForm').addEventListener('submit', function(ev){
 	ev.preventDefault();
 });
 
-function add_nick_to_channel(nick, op, voice, channel) {
+function add_nick_to_channel(nick, isOp, isVoice, channel) {
 	var channel_num = channel_map.get(channel);
 	var channel_panel = document.getElementById('channel' + channel_num + '-server0-panel');
 	var channel_user_list = (channel_panel.getElementsByClassName('channel-user-list'))[0];
@@ -191,14 +223,29 @@ function display_message(msg, type) {
 		message_cell.classList.add('message-text');
 		message_cell.innerHTML = msg.nick + ' has joined.';
 	}
+	else if(type === 'nick') {
+		var from_cell = message_row.insertCell(1);
+		from_cell.classList.add('message-nick');
+		var nick_icon = document.createElement('span');
+		nick_icon.classList.add('glyphicon', 'glyphicon-user');
+		from_cell.appendChild(nick_icon);
+
+		var message_cell = message_row.insertCell(2);
+		message_cell.classList.add('message-text');
+		message_cell.innerHTML = msg.text;
+	}
 
 	scrollMessagesToBottom();
 }
 
 function process_outbound_message(msg) {
 	if(msg.startsWith('/j') || msg.startsWith('/join')) {
-		//Need to create new channel pane. This is kind of a mess.
 		var channel = msg.split(' ')[1];
+		if(clientConfig.channels.indexOf(channel) !== -1) {
+			changeChannelContext(channel);
+			return;
+		}
+		clientConfig.channels.push(channel);
 
 		var new_panel =	channel_panel_factory('freenode', channel);
 		var channel_accordion = document.getElementById('channelAccordion');
@@ -218,6 +265,13 @@ function process_outbound_message(msg) {
 		client.send('NICK', msg.split(' ')[1]);
 		document.getElementById('clientNick').innerHTML = msg.split(' ')[1];
 		log.info('Changed nick to: ' + msg.split(' ')[1]);
+		return;
+	}
+	if(msg.startsWith('/msg') || msg.startsWith('/message')) {
+		var to = msg.split(' ')[1];
+		var message = msg.substring(msg.indexOf(to) + to.length + 1);
+		new entry.message({ nick: clientConfig.userName, channel: channelContext, message: message, time: +new Date() })
+		client.say(to, message);
 		return;
 	}
 
@@ -242,34 +296,13 @@ function process_outbound_message(msg) {
 	message_cell.innerHTML = msg;
 
 	scrollMessagesToBottom();
-	return;
 };
 
-function channel_panel_factory(server, channel){
-	/** This is kind of the structure of the channel panels
-	var new_panel =	'<div class="panel panel-default">
-						    <div class="panel-heading" role="tab" id="freenode-'+channel+'">
-						      <h4 class="panel-title">
-						        <a data-toggle="collapse" data-parent="#channelAccordion" href="#channel'+channel_id+'-server0-panel">
-						          '+channel'
-						        </a>
-						        <span class="badge" id="'+channel'-unread">6</span>
-						        <a href="#">
-						        	<span class="glyphicon glyphicon-remove-circle" style="float:right;"></span>
-					        	</a>
-						      </h4>
-						    </div>
-						    <div id="channel'+channel_id'-server0-panel" class="panel-collapse collapse in" role="tabpanel">
-						      <div class="panel-body channel-user-list-div">
-						      	<div class="channel-user-list list-group">
-						      		
-						      	</div>
-						      </div>
-						    </div>
-						  </div>
-						</div>';
-	**/
+function private_message_panel_factory(server, nick){
 
+}
+
+function channel_panel_factory(server, channel){
 	channel_map.set(channel, current_channel_id++)
 	var channel_id = channel_map.get(channel);
 
@@ -307,13 +340,11 @@ function channel_panel_factory(server, channel){
 
 	//Time to wire these all together
 	panel.appendChild(panel_heading);
-
 	panel_heading.appendChild(panel_title);
 	panel_title.innerHTML = channel_anchor;
 	panel_title.appendChild(unread_span);
 	panel_title.appendChild(part_button);
 	part_button.appendChild(part_button_icon);
-
 	panel.appendChild(panel_collapse);
 	panel_collapse.appendChild(panel_body);
 	panel_body.appendChild(channel_user_list);
@@ -322,6 +353,9 @@ function channel_panel_factory(server, channel){
 }
 
 function changeChannelContext(channel) {
+	if(channel === channelContext) {
+		return;
+	}
 	log.info('Change context to: ' + channel);
 	channelContext = channel;
 	entry.message.find({ channel: channel }, function(error, cursor){
