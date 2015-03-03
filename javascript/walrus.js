@@ -16,7 +16,7 @@ var channelContext = "";
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
 client.addListener('message', function(nick, to, text) {
-	var msg = new entry.message({ nick: nick, channel: to, message: text, time: +new Date() });
+	var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date() });
 	msg.save();
 
 	if(to === clientConfig.userName) {
@@ -250,14 +250,13 @@ function process_outbound_message(msg) {
 		var new_panel =	channel_panel_factory('freenode', channel);
 		var channel_accordion = document.getElementById('channelAccordion');
 		channel_accordion.appendChild(new_panel);
-		
-		changeChannelContext(channel);
 
 		client.join(channel, function(error){
 			if(error) {
 				throw error;
 			}
 			log.info('Joined channel ' + channel);
+			changeChannelContext(channel);
 		});
 		return;
 	}

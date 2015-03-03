@@ -3,7 +3,7 @@ mongoose.connect('mongodb://localhost:27017/walrus');
 
 var Message = new mongoose.Schema({
 	nick: String,
-	channel: String,
+	to: String,
 	message: String,
 	time: Number
 });
