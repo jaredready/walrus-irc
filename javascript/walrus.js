@@ -15,6 +15,8 @@ var channelContext = "";
 
 var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
+var open_private_messages = [];
+
 client.addListener('message', function(nick, to, text) {
 	var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date() });
 	msg.save();
@@ -271,10 +273,19 @@ function process_outbound_message(msg) {
 		var message = msg.substring(msg.indexOf(to) + to.length + 1);
 		new entry.message({ nick: clientConfig.userName, channel: channelContext, message: message, time: +new Date() })
 		client.say(to, message);
+		if(open_private_messages.length < 1) {
+			private_message_panel = channel_panel_factory('freenode', 'PrivateMessages');
+			var channel_accordion = document.getElementById('channelAccordion');
+			channel_accordion.appendChild(private_message_panel);
+		}
+		if(open_private_messages.indexOf(to) === -1) {
+			add_nick_to_channel(to, false, false, 'PrivateMessages');
+			open_private_messages.push(to);
+		}
 		return;
 	}
 
-	var message = new entry.message({ nick: clientConfig.userName, channel: channelContext, message: msg, time: +new Date() });
+	var message = new entry.message({ nick: clientConfig.userName, to: channelContext, message: msg, time: +new Date() });
 	message.save();
 
 	client.say(channelContext, msg);
@@ -355,9 +366,12 @@ function changeChannelContext(channel) {
 	if(channel === channelContext) {
 		return;
 	}
+	if(channel === 'PrivateMessages') {
+		channel = clientConfig.userName;
+	}
 	log.info('Change context to: ' + channel);
 	channelContext = channel;
-	entry.message.find({ channel: channel }, function(error, cursor){
+	entry.message.find({ to: channel }, function(error, cursor){
 		if(error) {
 			throw error;
 		}
