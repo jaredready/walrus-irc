@@ -24,6 +24,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		},
 
 		removeUserFromChannel: function (nick, channel) {
+			//Uh yea this doesnt work, channel = [{title: users:}]
 			var channel_index = service.channels.indexOf(channel);
 			if(channel_index !== -1) {
 				var nick_index = service.channels[channel_index].users.indexOf(nick);
@@ -38,6 +39,12 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			service.addUserToChannel(clientConfig.userName, channel);
 			$rootScope.$apply();
 		},
+
+		removeChannel: function (channel) {
+			service.channels = service.channels.filter(function (_channel) {
+				return _channel.title !== channel;
+			});
+		}
 
 		sendMessageToContext: function (message) {
 			client.say(service.context, message);
@@ -92,6 +99,9 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	});
 
 	client.addListener('part', function (channel, nick, reason, message) {
+		if(nick === clientConfig.userName) {
+
+		}
 		service.removeUserFromChannel(nick, channel);
 	});
 
