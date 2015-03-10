@@ -39,7 +39,6 @@
     display: block;
 }
 #channel-accordion {
-    width:25%;
     float:right;
 }
 #message-input {

@@ -1,12 +1,16 @@
 walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	var service = {
 		messages: [],
+		context_messages: [],
 		channels: [],
-		context: "#botdever",
+		context: "",
 
 		addMessage: function (from, to, time, message) {
 			service.messages.push({ nick: from, to: to, message: message, time: time });
-			$rootScope.$apply();
+			if(to === service.context) {
+				service.context_messages.push({ nick: from, to: to, message: message, time: time });
+				$rootScope.$apply();
+			}
 		},
 
 		addUserToChannel: function (nick, channel) {
@@ -28,6 +32,27 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		sendMessageToContext: function (message) {
 			client.say(service.context, message);
 			service.messages.push({ nick: clientConfig.userName, to: service.context, time: +new Date(), message: message });
+			service.context_messages.push({ nick: clientConfig.userName, to: service.context, time: +new Date(), message: message });
+		},
+
+		handleMessage: function (message) {
+			if(message.startsWith('/j') || message.startsWith('/join')) {
+				var channel = message.split(' ')[1];
+				client.join(channel);
+			}
+			else {
+				service.sendMessageToContext(message);
+			}
+		},
+
+		changeContext: function (context) {
+			service.context_messages = [];
+			for(var i = 0; i < service.messages.length; i++) {
+				if(service.messages[i].to === context) {
+					service.context_messages.push(service.messages[i]);
+				}
+			}
+			service.context = context;
 		}
 	}
 
