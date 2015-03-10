@@ -9,8 +9,8 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			service.messages.push({ nick: from, to: to, message: message, time: time });
 			if(to === service.context) {
 				service.context_messages.push({ nick: from, to: to, message: message, time: time });
-				$rootScope.$apply();
 			}
+			$rootScope.$apply();
 		},
 
 		addUserToChannel: function (nick, channel) {
@@ -23,6 +23,16 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			}
 		},
 
+		removeUserFromChannel: function (nick, channel) {
+			var channel_index = service.channels.indexOf(channel);
+			if(channel_index !== -1) {
+				var nick_index = service.channels[channel_index].users.indexOf(nick);
+				if(nick_index !== -1) {
+					service.channels[channel_index].users.splice(nick_index, 1);
+				}
+			}
+		},
+
 		addChannel: function (channel) {
 			service.channels.push({ title: channel, users: [] });
 			service.addUserToChannel(clientConfig.userName, channel);
@@ -31,8 +41,8 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 
 		sendMessageToContext: function (message) {
 			client.say(service.context, message);
-			service.messages.push({ nick: clientConfig.userName, to: service.context, time: +new Date(), message: message });
-			service.context_messages.push({ nick: clientConfig.userName, to: service.context, time: +new Date(), message: message });
+			service.messages.push({ nick: clientConfig.userName, to: service.context, message: message, time: +new Date() });
+			service.context_messages.push({ nick: clientConfig.userName, to: service.context, message: message, time: +new Date() });
 		},
 
 		handleMessage: function (message) {
@@ -46,7 +56,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		},
 
 		changeContext: function (context) {
-			service.context_messages = [];
+			service.context_messages.length = 0; //Clears out context_messages
 			for(var i = 0; i < service.messages.length; i++) {
 				if(service.messages[i].to === context) {
 					service.context_messages.push(service.messages[i]);
@@ -81,6 +91,10 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		}
 	});
 
+	client.addListener('part', function (channel, nick, reason, message) {
+		service.removeUserFromChannel(nick, channel);
+	});
+
 	client.addListener('names', function (channel, nicks) {
 		Object.keys(nicks).forEach(function(nick) {
 			if(nick === clientConfig.userName) return;
@@ -90,7 +104,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		});
 	});
 
-	client.addListener('raw', function(message){
+	client.addListener('error', function (message) {
 		log.info(message);
 	});
 

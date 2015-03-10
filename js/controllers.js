@@ -20,7 +20,7 @@ walrusIRCApp.controller("chatWindowController", ['$scope', 'IRCService',
 
 		$scope.changeContext = function (context) {
 			IRCService.changeContext(context);
-		}
+		};
     }
 ]);
 
