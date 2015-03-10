@@ -1,0 +1,51 @@
+.channel-div {
+    max-height: 85vh;
+    overflow-y: auto;
+    font-size: 90%;
+}
+.channel-user-list-div {
+    padding: 0px;
+    max-height: 75vh;
+    overflow-y: auto;
+    font-size: 85%;
+}
+.channel-user-list {
+    padding: 0px;
+}
+.channel-user-list-div .panel-body {
+    padding: 0px;
+}
+#message-table {
+    float:left;
+}
+.message-timestamp {
+    width: auto;
+    white-space: nowrap;
+}
+.message-nick {
+    width: auto;
+    white-space: nowrap;
+    text-align: right;
+    border-right: 1px solid #ddd;
+}
+.message-text {
+    width: 100%;
+    word-break: break-all;
+}
+#message-table tbody {
+    max-height: 85vh;
+    font-size: 85%;
+    overflow: auto;
+    display: block;
+}
+#channel-accordion {
+    width:25%;
+    float:right;
+}
+#message-input {
+    width:50%;
+}
+.header-footer-compensate {
+    padding-top:60px;
+    padding-bottom:60px;
+}

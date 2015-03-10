@@ -1,0 +1,26 @@
+{
+  "name": "nwjs-angular-test",
+  "version": "0.0.0",
+  "description": "Testing Angular.js with NW.js",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jared Ready",
+  "license": "BSD-2-Clause",
+  "window": {
+    "title": "Walrus IRC",
+    "toolbar": true,
+    "width": 770,
+    "min_width": 775,
+    "height": 600,
+    "min_height": 400,
+    "resizable": true
+  },
+  "dependencies": {
+    "node-irc": "0.0.3",
+    "irc": "~0.3.9",
+    "winston": "~0.9.0",
+    "mongoose": "~3.8.24"
+  }
+}

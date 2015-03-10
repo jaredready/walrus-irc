@@ -1,0 +1,44 @@
+<nav ng-controller="networkTabController" class="navbar navbar-default navbar-fixed-top">
+    <tabset>
+        <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled"></tab>
+    </tabset>
+</nav>
+<div class="container-fluid">
+    <div class="row col-xs-9">
+        <table ng-controller="chatWindowController" class="table table-condensed table-hover" id="message-table">
+            <tbody>
+                <tr data-ng-repeat="line in chat">
+                    <td class="message-timestamp">{{line.time | date:'short'}}</td>
+                    <td class="message-nick">{{line.nick}}</td>
+                    <td class="message-text">{{line.message}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- This is where joined channels are displayed. Default is an accordion list -->
+    <div ng-controller="channelPaneController" class="panel-group channel-div row col-xs-3" id="channel-accordion" role="tablist">
+        <accordion close-others="true">
+            <accordion-group class="channel-user-list-div" heading="{{channel.title}}" ng-repeat="channel in channels">
+                <ul class="channel-user-list">
+                    <a class="list-group-item" ng-repeat="nick in channel.users">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <span>
+                            {{ nick }}
+                        </span>
+                    </a>
+                </div>
+            </accordion-group>
+        </accordion>
+    </div>
+</div>
+<nav class="navbar navbar-fixed-bottom" ng-controller="sendMessageController">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <span class="navbar-brand" id="clientNick">ResidentWalrus</span>
+        </div>
+        <form class="navbar-form" id="messageForm" action="">
+            <input id="message-input" type="text" ng-model="chatMessage" class="form-control" placeholder="Enter your message..." autocomplete="off" />
+            <button ng-click="sendMessage(chatMessage)" id="message-button" class="btn btn-default" type="button" ng-model="button" ng-disabled="!chatMessage">Send</button>
+        </form>
+    </div>
+</nav>

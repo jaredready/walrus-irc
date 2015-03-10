@@ -1,0 +1,1 @@
+walrusIRCApp = angular.module('walrusIRCApp', ['ngResource', 'ngRoute', 'ui.bootstrap']);
