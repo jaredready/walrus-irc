@@ -23,6 +23,16 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			}
 		},
 
+		addUsersToChannel: function (nicks, channel) {
+			var channel_idx = -1;
+			for(var i = 0; i < service.channels.length; i++) {
+				if(service.channels[i].title === channel) {
+					channel_idx = i;
+				}
+			}
+			Array.prototype.push.apply(service.channels[channel_idx].users, nicks);
+		},
+
 		removeUserFromChannel: function (nick, channel) {
 			//Uh yea this doesnt work, channel = [{title: users:}]
 			var channel_index = service.channels.indexOf(channel);
@@ -44,7 +54,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			service.channels = service.channels.filter(function (_channel) {
 				return _channel.title !== channel;
 			});
-		}
+		},
 
 		sendMessageToContext: function (message) {
 			client.say(service.context, message);
@@ -106,12 +116,17 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	});
 
 	client.addListener('names', function (channel, nicks) {
-		Object.keys(nicks).forEach(function(nick) {
-			if(nick === clientConfig.userName) return;
+		var start = new Date();
+		var _nicks = [];
+		for(var nick in nicks) {
+			if(nick === clientConfig.userName) continue;
 			else {
-				service.addUserToChannel(nick, channel);
+				_nicks.push(nick);
 			}
-		});
+		}
+		service.addUsersToChannel(_nicks, channel);
+		var end = new Date();
+		log.info('NAMES took ', end - start, 'ms.');
 	});
 
 	client.addListener('error', function (message) {
