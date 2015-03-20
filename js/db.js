@@ -5,7 +5,8 @@ var Message = new mongoose.Schema({
 	nick: String,
 	to: String,
 	message: String,
-	time: Number
+	time: Number,
+	type: String
 });
 
 var Channel = new mongoose.Schema({

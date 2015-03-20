@@ -5,7 +5,7 @@
     <div class="container-fluid" ng-controller="chatWindowController">
         <div class="row col-xs-9">
             <table class="table table-condensed table-hover" id="message-table">
-                <tbody>
+                <tbody scroll-glue>
                     <tr data-ng-repeat="line in chat">
                         <td class="message-timestamp">{{line.time | date:'short'}}</td>
                         <td class="message-nick">{{line.nick}}</td>

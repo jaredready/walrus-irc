@@ -5,10 +5,10 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		channels: [],
 		context: "",
 
-		addMessage: function (from, to, time, message) {
-			service.messages.push({ nick: from, to: to, message: message, time: time });
+		addMessage: function (from, to, time, message, type) {
+			service.messages.push({ nick: from, to: to, message: message, time: time, type: type });
 			if(to === service.context) {
-				service.context_messages.push({ nick: from, to: to, message: message, time: time });
+				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type });
 			}
 			$rootScope.$apply();
 		},
@@ -94,9 +94,9 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
 	client.addListener('message', function (nick, to, text) {
-		var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date() });
+		var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date(), type: 'message' });
 		msg.save();
-		service.addMessage(nick, to, +new Date(), text);
+		service.addMessage(nick, to, +new Date(), text, 'message');
 	});
 
 	client.addListener('join', function (channel, nick, message) {
@@ -105,6 +105,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		}
 		else {
 			service.addUserToChannel(nick, channel);
+			service.addMessage(nick, channel, +new Date(), message, 'join');
 		}
 	});
 
