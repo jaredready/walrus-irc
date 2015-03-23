@@ -15,7 +15,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 
 		getChannelUsers: function () {
 			for(var i = 0; i < service.channels.length; i++) {
-				if(service.channels[i].title === context) {
+				if(service.channels[i].title === service.context) {
 					return service.channels[i].users;
 				}
 			}
