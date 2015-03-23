@@ -36,5 +36,18 @@ walrusIRCApp.controller("sendMessageController", ['$scope', 'IRCService',
 			IRCService.handleMessage(chatMessage);
 			$scope.chatMessage = "";
 		};
+
+		$scope.tabCompleteNick = function (keyEvent) {
+			if(keyEvent.which === 9) {
+				var channel_users = IRCService.getChannelUsers();
+				for(var i = 0; i < channel_users.length; i++) {
+					if(channel_users[i].startsWith($scope.chatMessage)) {
+						$scope.chatMessage = channel_users[i] + ': ';
+						keyEvent.preventDefault();
+						return;
+					}
+				}
+			}
+		}
 	}
 ]);

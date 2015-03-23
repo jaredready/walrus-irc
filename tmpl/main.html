@@ -37,7 +37,7 @@
             <span class="navbar-brand" id="clientNick">ResidentWalrus</span>
         </div>
         <form ng-submit="sendMessage(chatMessage)" class="navbar-form" id="messageForm">
-            <input id="message-input" type="text" ng-model="chatMessage" class="form-control" placeholder="Enter your message..." autocomplete="off" />
+            <input id="message-input" type="text" ng-keypress="tabCompleteNick($event)" ng-model="chatMessage" class="form-control" placeholder="Enter your message..." autocomplete="off" />
             <button ng-click="sendMessage(chatMessage)" id="message-button" class="btn btn-default" type="button" ng-model="button" ng-disabled="!chatMessage">Send</button>
         </form>
     </div>

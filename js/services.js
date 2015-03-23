@@ -13,6 +13,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 			$rootScope.$apply();
 		},
 
+		getChannelUsers: function () {
+			for(var i = 0; i < service.channels.length; i++) {
+				if(service.channels[i].title === context) {
+					return service.channels[i].users;
+				}
+			}
+		},
+
 		addUserToChannel: function (nick, channel) {
 			for(var i = 0; i < service.channels.length; i++) {
 				if(service.channels[i].title === channel) {
