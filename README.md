@@ -1,2 +1,2 @@
-# nwjs-angular-test
-Proof-of-concept project for using NW.js and Angular.js together
+# Walrus IRC
+Modern IRC client built on top of [NW.js](https://github.com/nwjs/nw.js)
