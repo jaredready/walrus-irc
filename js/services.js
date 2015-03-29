@@ -5,10 +5,10 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		channels: [],
 		context: "",
 
-		addMessage: function (from, to, time, message, type) {
+		addMessage: function (from, to, time, message, type, options) {
 			service.messages.push({ nick: from, to: to, message: message, time: time, type: type });
 			if(to === service.context) {
-				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type });
+				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			}
 			$rootScope.$apply();
 		},
@@ -104,7 +104,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	client.addListener('message', function (nick, to, text) {
 		var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date(), type: 'message' });
 		msg.save();
-		service.addMessage(nick, to, +new Date(), text, 'message');
+		var foundGist = text.match('https:\/\/gist.github.com/[A-Za-z0-9]+\/.+');
+		if(foundGist) {
+			var gistId = foundGist[0].split('/').pop();
+			service.addMessage(nick, to, +new Date(), text, 'gist', [gistId]);
+		}
+		else {
+			service.addMessage(nick, to, +new Date(), text, 'message');
+		}
 	});
 
 	client.addListener('join', function (channel, nick, message) {

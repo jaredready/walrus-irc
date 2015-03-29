@@ -9,7 +9,11 @@
                     <tr data-ng-repeat="line in chat">
                         <td class="message-timestamp">{{line.time | date:'short'}}</td>
                         <td class="message-nick">{{line.nick}}</td>
-                        <td class="message-text">{{line.message}}</td>
+                        <td class="message-text">{{line.message}}
+                            <p ng-if="line.type === 'gist'">
+                                <code compile-gist-embed data-gist-id="{{line.options[0]}}"></code>
+                            </p>
+                        </td>
                     </tr>
                 </tbody>
             </table>
