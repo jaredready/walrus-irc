@@ -11,7 +11,9 @@
                         <td class="message-nick">{{line.nick}}</td>
                         <td class="message-text">{{line.message}}
                             <p ng-if="line.type === 'gist'">
-                                <code walrus-auto-gistify data-gist-id="{{line.options[0]}}"></code>
+                                <code ng-show="showGist" walrus-auto-gistify data-gist-id="{{line.options[0]}}"></code>
+                                <br>
+                                <button ng-click="showGist = !showGist" class="btn btn-primary btn-xs">Show/Hide</button>
                             </p>
                         </td>
                     </tr>
