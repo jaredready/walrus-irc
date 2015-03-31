@@ -6,7 +6,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		context: "",
 
 		addMessage: function (from, to, time, message, type, options) {
-			service.messages.push({ nick: from, to: to, message: message, time: time, type: type });
+			service.messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			if(to === service.context) {
 				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			}

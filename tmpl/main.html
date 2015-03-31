@@ -11,7 +11,7 @@
                         <td class="message-nick">{{line.nick}}</td>
                         <td class="message-text">{{line.message}}
                             <p ng-if="line.type === 'gist'">
-                                <code compile-gist-embed data-gist-id="{{line.options[0]}}"></code>
+                                <code walrus-auto-gistify data-gist-id="{{line.options[0]}}"></code>
                             </p>
                         </td>
                     </tr>
