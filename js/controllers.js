@@ -3,6 +3,7 @@ walrusIRCApp.controller("walrusController", function ($scope) {
 });
 
 walrusIRCApp.controller("networkTabController", function ($scope){
+	// This is just an example. Multiple network connectivity is not yet implemented.
 	$scope.networks = [
 		{ title:'Freenode', content:'Freenode Content' },
     	{ title:'Quakenet', content:'Quakenet Content' },

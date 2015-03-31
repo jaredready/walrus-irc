@@ -9,7 +9,13 @@
                     <tr data-ng-repeat="line in chat">
                         <td class="message-timestamp">{{line.time | date:'short'}}</td>
                         <td class="message-nick">{{line.nick}}</td>
-                        <td class="message-text">{{line.message}}</td>
+                        <td class="message-text">{{line.message}}
+                            <p ng-if="line.type === 'gist'">
+                                <code ng-show="showGist" walrus-auto-gistify data-gist-id="{{line.options[0]}}"></code>
+                                <br>
+                                <button ng-click="showGist = !showGist" class="btn btn-primary btn-xs">Show/Hide</button>
+                            </p>
+                        </td>
                     </tr>
                 </tbody>
             </table>

@@ -1,1 +1,1 @@
-walrusIRCApp = angular.module('walrusIRCApp', ['ngResource', 'ngRoute', 'ui.bootstrap', 'luegg.directives']);
+walrusIRCApp = angular.module('walrusIRCApp', ['ngResource', 'ngRoute', 'gist-embed', 'ui.bootstrap', 'luegg.directives']);
