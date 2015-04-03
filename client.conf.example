@@ -1,0 +1,21 @@
+{
+	"server": "irc.freenode.net",
+	"userName": "ForeignWalrus",
+	"realName": "Walrus IRC",
+	// password: '',
+	"port": 6667,
+	"debug": false,
+	"showErrors": false,
+	"autoRejoin": false,
+	"autoConnect": false,
+	"channels": [],
+	"secure": false,
+	"selfSigned": false,
+	"certExpired": false,
+	"floodProtection": true,
+	"floodProtectionDelay": 1000,
+	"sasl": true,
+	"stripColors": false,
+	"channelPrefixes": "&#",
+	"messageSplit": 512
+}
