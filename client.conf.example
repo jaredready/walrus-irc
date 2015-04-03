@@ -2,7 +2,7 @@
 	"server": "irc.freenode.net",
 	"userName": "ForeignWalrus",
 	"realName": "Walrus IRC",
-	// password: '',
+	password: "",
 	"port": 6667,
 	"debug": false,
 	"showErrors": false,
