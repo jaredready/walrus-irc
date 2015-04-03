@@ -39,7 +39,6 @@ walrusIRCApp.controller("sendMessageController", ['$scope', 'IRCService',
 		};
 
 		$scope.tabCompleteNick = function(keyEvent) {
-			console.log(keyEvent);
 			if(keyEvent.keyCode === 9) {
 				keyEvent.preventDefault();
 				var channel_users = IRCService.getChannelUsers();
