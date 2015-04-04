@@ -1,9 +1,25 @@
-walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
+walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootScope, $timeout) {
 	var service = {
+		nick: "",
 		messages: [],
 		context_messages: [],
 		channels: [],
 		context: "",
+
+		changeClientNick: function (newNick) {
+			service.nick = newNick;
+			// This $timeout is not ideal, should be able to either call $apply()
+			// or not need to, but that's not the case for whatever reason. Works for now.
+			// #yolo
+			$timeout(function () {
+				$rootScope.$apply();
+			}, 0);
+		},
+
+		// Change another users displayed nick
+		changeOtherNick: function (channel, oldnick, newnick) {
+
+		},
 
 		addMessage: function (from, to, time, message, type, options) {
 			service.messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
@@ -75,6 +91,10 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 				var channel = message.split(' ')[1];
 				client.join(channel);
 			}
+			else if(message.startsWith('/n') || message.startsWith('/nick')) {
+				var newNick = message.split(' ')[1];
+				client.send('NICK', newNick);
+			}
 			else {
 				service.sendMessageToContext(message);
 			}
@@ -98,6 +118,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 	var IRClient = require('irc').Client;
 
 	var clientConfig = JSON.parse(fs.readFileSync('client.json'), 'utf8');
+	service.changeClientNick(clientConfig.userName);
 
 	var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
@@ -143,6 +164,16 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', function ($rootScope) {
 		service.addUsersToChannel(_nicks, channel);
 		var end = new Date();
 		log.info('NAMES took ', end - start, 'ms.');
+	});
+
+	client.addListener('nick', function (oldnick, newnick, channels, message) {
+		if(oldnick === service.nick) {
+			service.changeClientNick(newnick);
+		}
+	});
+
+	client.addListener('raw', function (message) {
+		log.info(message);
 	});
 
 	client.addListener('error', function (message) {

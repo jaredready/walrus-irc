@@ -40,7 +40,7 @@
 <nav class="navbar navbar-fixed-bottom" ng-controller="sendMessageController">
     <div class="container-fluid">
         <div class="navbar-header">
-            <span class="navbar-brand" id="clientNick">ResidentWalrus</span>
+            <span class="navbar-brand">{{ clientNick }}</span>
         </div>
         <form ng-submit="sendMessage(chatMessage)" class="navbar-form" id="messageForm">
             <input id="message-input" type="text" ng-keydown="tabCompleteNick($event)" ng-model="chatMessage" class="form-control" placeholder="Enter your message..." autocomplete="off" tabindex="0" />
