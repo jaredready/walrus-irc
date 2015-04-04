@@ -13,10 +13,6 @@ walrusIRCApp.controller("networkTabController", function ($scope){
 
 walrusIRCApp.controller("chatWindowController", ['$scope', 'IRCService',
     function($scope, IRCService) {
-    	$scope.$on( 'context_messages.update', function( event ) {
-			$scope.chat = IRCService.context_messages;
-		});
-
 		$scope.chat = IRCService.context_messages;
 
 		$scope.changeContext = function (context) {
@@ -33,13 +29,16 @@ walrusIRCApp.controller("channelPaneController", ['$scope', 'IRCService',
 
 walrusIRCApp.controller("sendMessageController", ['$scope', 'IRCService',
 	function($scope, IRCService) {
+		$scope.$watch(function () { return IRCService.nick; }, function (nick) {
+			$scope.clientNick = nick;
+		});
+
 		$scope.sendMessage = function(chatMessage) {
 			IRCService.handleMessage(chatMessage);
 			$scope.chatMessage = "";
 		};
 
 		$scope.tabCompleteNick = function(keyEvent) {
-			console.log(keyEvent);
 			if(keyEvent.keyCode === 9) {
 				keyEvent.preventDefault();
 				var channel_users = IRCService.getChannelUsers();
