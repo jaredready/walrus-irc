@@ -8,20 +8,23 @@
                 <tbody scroll-glue>
                     <tr data-ng-repeat="line in chat">
                         <td class="message-timestamp">{{line.time | date:'short'}}</td>
-                        <div ng-if="line.type === 'gist'">
-                            <td class="message-nick">{{line.nick}}</td>
-                            <td class="message-text">{{line.message}}
+                        <td class="message-nick">
+                            <span ng-if="line.type === 'join'" class="glyphicon glyphicon-arrow-right"></span>
+                            <span ng-if="line.type === 'part'" class="glyphicon glyphicon-arrow-left"></span>
+                            <span ng-if="line.type === 'message'">{{line.nick}}</span>
+                        </td>
+                        <td class="message-text">
+                            <span ng-if="line.type === 'join'">{{line.message}}</span>
+                            <span ng-if="line.type === 'part'">{{line.message}}</span>
+                            <span ng-if="line.type === 'message'">{{line.message}}</span>
+                            <span ng-if="line.type === 'gist'">{{line.message}}
                                 <p>
                                     <code ng-show="showGist" walrus-auto-gistify data-gist-id="{{line.options[0]}}"></code>
                                     <br>
                                     <button ng-click="showGist = !showGist" class="btn btn-primary btn-xs">Show/Hide</button>
                                 </p>
-                            </td>
-                        </div>
-                        <div ng-if="false">
-                            <td class="message-nick"><span class="glyphicon glyphicon-arrow-right"></span></td>
-                            <td class="message-text">{{line.message}}</td>
-                        </div>
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>

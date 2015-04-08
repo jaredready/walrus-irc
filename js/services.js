@@ -82,8 +82,8 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 
 		sendMessageToContext: function (message) {
 			client.say(service.context, message);
-			service.messages.push({ nick: clientConfig.userName, to: service.context, message: message, time: +new Date() });
-			service.context_messages.push({ nick: clientConfig.userName, to: service.context, message: message, time: +new Date() });
+			service.messages.push({ nick: clientConfig.userName, to: service.context, message: message, type: 'message', time: +new Date() });
+			service.context_messages.push({ nick: clientConfig.userName, to: service.context, message: message, type: 'message', time: +new Date() });
 		},
 
 		handleMessage: function (message) {
@@ -141,13 +141,16 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		}
 		else {
 			service.addUserToChannel(nick, channel);
-			service.addMessage(nick, channel, +new Date(), message, 'join');
+			service.addMessage(nick, channel, +new Date(), nick + ' has joined the channel.', 'join');
 		}
 	});
 
 	client.addListener('part', function (channel, nick, reason, message) {
 		if(nick === clientConfig.userName) {
 
+		}
+		else {
+			service.addMessage(nick, channel, +new Date(), nick + ' has left the channel. ('+reason+')', 'part');
 		}
 		service.removeUserFromChannel(nick, channel);
 	});
