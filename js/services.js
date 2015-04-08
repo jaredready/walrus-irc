@@ -119,6 +119,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 
 	var clientConfig = JSON.parse(fs.readFileSync('client.json'), 'utf8');
 	service.changeClientNick(clientConfig.userName);
+	service.context = 'Freenode';
 
 	var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
@@ -169,14 +170,17 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		log.info('NAMES took ', end - start, 'ms.');
 	});
 
+	client.addListener('motd', function (motd) {
+		motd.split('\n').forEach(function(line) {
+			log.info(line);
+			service.addMessage('', 'Freenode', +new Date(), line, 'motd');
+		});
+	});
+
 	client.addListener('nick', function (oldnick, newnick, channels, message) {
 		if(oldnick === service.nick) {
 			service.changeClientNick(newnick);
 		}
-	});
-
-	client.addListener('raw', function (message) {
-		log.info(message);
 	});
 
 	client.addListener('error', function (message) {

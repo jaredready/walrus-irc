@@ -1,6 +1,6 @@
 <nav ng-controller="networkTabController" class="navbar navbar-default navbar-fixed-top" style="height:100%">
     <tabset>
-        <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled"></tab>
+        <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled" ng-click="changeContext(network.title)"></tab>
     </tabset>
     <div class="container-fluid" ng-controller="chatWindowController">
         <div class="row col-xs-9">
@@ -12,6 +12,8 @@
                             <span ng-if="line.type === 'join'" class="glyphicon glyphicon-arrow-right"></span>
                             <span ng-if="line.type === 'part'" class="glyphicon glyphicon-arrow-left"></span>
                             <span ng-if="line.type === 'message'">{{line.nick}}</span>
+                            <span ng-if="line.type === 'gist'">{{line.nick}}</span>
+                            <span nf-if="line.type === 'motd'"></span>
                         </td>
                         <td class="message-text">
                             <span ng-if="line.type === 'join'">{{line.message}}</span>
@@ -24,6 +26,7 @@
                                     <button ng-click="showGist = !showGist" class="btn btn-primary btn-xs">Show/Hide</button>
                                 </p>
                             </span>
+                            <span nf-if="line.type === 'motd'">{{line.message}}</span>
                         </td>
                     </tr>
                 </tbody>
