@@ -1,6 +1,6 @@
 <nav ng-controller="networkTabController" class="navbar navbar-default navbar-fixed-top" style="height:100%">
     <tabset>
-        <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled" ng-click="changeContext(network.title)"></tab>
+        <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled" ng-click="changeNetwork(network.title)"></tab>
     </tabset>
     <div class="container-fluid" ng-controller="chatWindowController">
         <div class="row col-xs-9">

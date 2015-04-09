@@ -101,6 +101,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		changeContext: function (context) {
+			log.info('Changing context to : ', context);
 			service.context_messages.length = 0; //Clears out context_messages
 			for(var i = 0; i < service.messages.length; i++) {
 				if(service.messages[i].to === context) {
