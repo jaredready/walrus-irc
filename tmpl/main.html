@@ -26,7 +26,7 @@
                                     <button ng-click="showGist = !showGist" class="btn btn-primary btn-xs">Show/Hide</button>
                                 </p>
                             </span>
-                            <span nf-if="line.type === 'motd'">{{line.message}}</span>
+                            <span ng-if="line.type === 'motd'">{{line.message}}</span>
                         </td>
                     </tr>
                 </tbody>
