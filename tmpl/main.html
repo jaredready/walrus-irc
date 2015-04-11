@@ -11,6 +11,7 @@
                         <td class="message-nick">
                             <span ng-if="line.type === 'join'" class="glyphicon glyphicon-arrow-right"></span>
                             <span ng-if="line.type === 'part'" class="glyphicon glyphicon-arrow-left"></span>
+                            <span ng-if="line.type === 'quit'" class="glyphicon glyphicon-thumbs-down"></span>
                             <span ng-if="line.type === 'message'">{{line.nick}}</span>
                             <span ng-if="line.type === 'gist'">{{line.nick}}</span>
                             <span nf-if="line.type === 'motd'"></span>
@@ -18,6 +19,7 @@
                         <td class="message-text">
                             <span ng-if="line.type === 'join'">{{line.message}}</span>
                             <span ng-if="line.type === 'part'">{{line.message}}</span>
+                            <span ng-if="line.type === 'quit'">{{line.message}}</span>
                             <span ng-if="line.type === 'message'">{{line.message}}</span>
                             <span ng-if="line.type === 'gist'">{{line.message}}
                                 <p>

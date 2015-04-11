@@ -58,12 +58,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		removeUserFromChannel: function (nick, channel) {
-			//Uh yea this doesnt work, channel = [{title: users:}]
-			var channel_index = service.channels.indexOf(channel);
-			if(channel_index !== -1) {
-				var nick_index = service.channels[channel_index].users.indexOf(nick);
-				if(nick_index !== -1) {
-					service.channels[channel_index].users.splice(nick_index, 1);
+			for(var i = 0; i < service.channels.length; i++) {
+				if(service.channels[i].title === channel) {
+					var nick_index = service.channels[i].users.indexOf(nick);
+					if(nick_index !== -1) {
+						service.channels[i].users.splice(nick_index, 1);
+					}
+					$rootScope.$apply();
+					return;
 				}
 			}
 		},
@@ -155,6 +157,13 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 			service.addMessage(nick, channel, +new Date(), nick + ' has left the channel. ('+reason+')', 'part');
 		}
 		service.removeUserFromChannel(nick, channel);
+	});
+
+	client.addListener('quit', function (nick, reason, channels, message) {
+		channels.forEach(function(channel) {
+			service.removeUserFromChannel(nick, channel);
+			service.addMessage(nick, channel, +new Date(), nick + ' has quit. ('+reason+')', 'quit');
+		});
 	});
 
 	client.addListener('names', function (channel, nicks) {
