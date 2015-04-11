@@ -15,6 +15,7 @@
                             <span ng-if="line.type === 'message'">{{line.nick}}</span>
                             <span ng-if="line.type === 'gist'">{{line.nick}}</span>
                             <span nf-if="line.type === 'motd'"></span>
+                            <span ng-if="line.type === 'notice'" class="glyphicon glyphicon-exclamation-sign"></span>
                         </td>
                         <td class="message-text">
                             <span ng-if="line.type === 'join'">{{line.message}}</span>
@@ -29,6 +30,7 @@
                                 </p>
                             </span>
                             <span ng-if="line.type === 'motd'">{{line.message}}</span>
+                            <span ng-if="line.type === 'notice'">{{line.message}}</span>
                         </td>
                     </tr>
                 </tbody>

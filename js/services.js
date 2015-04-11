@@ -139,6 +139,17 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		}
 	});
 
+	client.addListener('notice', function (nick, to, text, message) {
+		// If came from server
+		if(!nick) {
+			service.addMessage('Freenode', to, +new Date(), text, 'notice');
+		}
+		// Else came from some user
+		else if(nick) {
+			service.addMessage(nick, to, +new Date(), text, 'notice');
+		}
+	});
+
 	client.addListener('join', function (channel, nick, message) {
 		if(nick === clientConfig.userName) {
 			service.addChannel(channel);
