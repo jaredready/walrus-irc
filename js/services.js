@@ -146,7 +146,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		}
 		// Else came from some user
 		else if(nick) {
-			service.addMessage(nick, to, +new Date(), text, 'notice');
+			service.addMessage(nick, to, +new Date(), '{-from '+nick+'-} ' + text, 'notice');
 		}
 	});
 
