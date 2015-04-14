@@ -49,9 +49,14 @@
                         </a>
                     </ul>
                 </accordion-group>
-                <accordion-group class="channel-user-list-div" heading="Private Messages">
+                <accordion-group ng-controller="privateMessageController" class="channel-user-list-div" heading="Private Messages">
                     <ul class="channel-user-list">
-                        <a class="list-group-item">
+                        <a class="list-group-item" ng-repeat="nick in $parent.$parent.privateMessagers | orderBy:'toString()'" ng-click="$parent.$parent.$parent.changePMContext(nick)">
+                            <span class="glyphicon glyphicon-user"><span>
+                            <span>
+                                {{ nick }}
+                            </span>
+                        </a>
                     </ul>
                 </accordion-group>
             </accordion>

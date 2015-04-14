@@ -33,6 +33,17 @@ walrusIRCApp.controller("channelPaneController", ['$scope', 'IRCService',
 	}
 ]);
 
+walrusIRCApp.controller("privateMessageController", ['$scope', 'IRCService',
+	function($scope, IRCService) {
+		$scope.$watch(function () { return IRCService.privateMessagers; }, function (nick) {
+			$scope.privateMessagers = IRCService.privateMessagers;
+		});
+		$scope.changePMContext = function(nick) {
+			IRCService.changeToPrivateMessageContext(nick);
+		};
+	}
+]);
+
 walrusIRCApp.controller("sendMessageController", ['$scope', 'IRCService',
 	function($scope, IRCService) {
 		$scope.$watch(function () { return IRCService.nick; }, function (nick) {

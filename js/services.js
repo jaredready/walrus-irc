@@ -4,6 +4,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		messages: [],
 		context_messages: [],
 		channels: [],
+		privateMessagers: [],
 		context: "",
 
 		changeClientNick: function (newNick) {
@@ -24,6 +25,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		addMessage: function (from, to, time, message, type, options) {
 			service.messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			if(to === service.context) {
+				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
+			}
+			$rootScope.$apply();
+		},
+
+		addPrivateMessage: function (from, to, time, message, type, options) {
+			service.messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
+			if(from === service.context) {
 				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			}
 			$rootScope.$apply();
@@ -55,6 +64,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 				}
 			}
 			Array.prototype.push.apply(service.channels[channel_idx].users, nicks);
+		},
+
+		addPrivateMessager: function (nick) {
+			if(service.privateMessagers.indexOf(nick) === -1) {
+				service.privateMessagers.push(nick);
+				$rootScope.$apply();
+			}
+
 		},
 
 		removeUserFromChannel: function (nick, channel) {
@@ -111,6 +128,17 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 				}
 			}
 			service.context = context;
+		},
+
+		changeToPrivateMessageContext: function (nick) {
+			log.info('Changing context to : ', nick);
+			service.context_messages.length = 0;
+			for(var i = 0; i < service.messages.length; i++) {
+				if(service.messages[i].to === clientConfig.userName && service.messages[i].nick === nick) {
+					service.context_messages.push(service.messages[i]);
+				}
+			}
+			service.context = nick;
 		}
 	}
 
@@ -127,6 +155,8 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 	var client = new IRClient(clientConfig.server, clientConfig.userName, clientConfig);
 
 	client.addListener('message', function (nick, to, text) {
+		// Don't handle pm here
+		if(to === clientConfig.userName) return;
 		var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date(), type: 'message' });
 		msg.save();
 		var foundGist = text.match('https:\/\/gist.github.com/[A-Za-z0-9]+\/.+');
@@ -137,6 +167,11 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		else {
 			service.addMessage(nick, to, +new Date(), text, 'message');
 		}
+	});
+
+	client.addListener('pm', function (nick, text, message) {
+		service.addPrivateMessager(nick);
+		service.addPrivateMessage(nick, clientConfig.userName, +new Date(), text, 'message');
 	});
 
 	client.addListener('notice', function (nick, to, text, message) {
