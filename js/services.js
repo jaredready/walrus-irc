@@ -137,6 +137,9 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 				if(service.messages[i].to === clientConfig.userName && service.messages[i].nick === nick) {
 					service.context_messages.push(service.messages[i]);
 				}
+				else if(service.messages[i].to === nick && service.messages[i].nick === clientConfig.userName) {
+					service.context_messages.push(service.messages[i]);
+				}
 			}
 			service.context = nick;
 		}
