@@ -12,6 +12,9 @@
 .channel-user-list {
     padding: 0px;
 }
+.panel-body {
+    padding: 0px;
+}
 .channel-user-list-div .panel-body {
     padding: 0px;
 }

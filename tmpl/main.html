@@ -39,15 +39,17 @@
         <!-- This is where joined channels are displayed. Default is an accordion list -->
         <div ng-controller="channelPaneController" class="panel-group channel-div row col-xs-3" id="channel-accordion" role="tablist">
             <accordion close-others="true">
-                <accordion-group class="channel-user-list-div" heading="{{channel.title}}" ng-repeat="channel in channels" ng-click="changeContext(channel.title)">
-                    <ul class="channel-user-list">
-                        <a class="list-group-item" ng-repeat="nick in channel.users | orderBy:'toString()'">
-                            <span class="glyphicon glyphicon-user"></span>
-                            <span>
-                                {{ nick }}
-                            </span>
-                        </a>
-                    </ul>
+                <accordion-group heading="{{channel.title}}" ng-repeat="channel in channels" ng-click="changeContext(channel.title)">
+                    <div class="channel-user-list-div">
+                        <ul class="channel-user-list">
+                            <a class="list-group-item" ng-repeat="nick in channel.users | orderBy:'toString()'">
+                                <span class="glyphicon glyphicon-user"></span>
+                                <span>
+                                    {{ nick }}
+                                </span>
+                            </a>
+                        </ul>
+                    </div>
                 </accordion-group>
                 <accordion-group ng-controller="privateMessageController" class="channel-user-list-div" heading="Private Messages">
                     <ul class="channel-user-list">
