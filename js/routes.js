@@ -3,8 +3,10 @@ walrusIRCApp.config(function ($routeProvider) {
     	.when('/main', {
     		templateUrl: 'tmpl/main.html',
     		controller: 'walrusController'
-    	})
-        .when('/', {
+    	}).when('/signup', {
+    		templateUrl: 'tmpl/signup.html',
+    		controller: 'loginController'
+    	}).when('/', {
             templateUrl: 'tmpl/login.html',
             controller: 'loginController'
         }).otherwise({
