@@ -5,5 +5,5 @@ walrusIRCApp.directive('walrusAutoGistify', function ($timeout) {
 				$($element[0]).gist();
 			}, 500);
         }
-	}
-})
+	};
+});

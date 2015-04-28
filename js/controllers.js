@@ -66,6 +66,6 @@ walrusIRCApp.controller("sendMessageController", ['$scope', 'IRCService',
 					}
 				}
 			}
-		}
+		};
 	}
 ]);

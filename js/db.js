@@ -18,7 +18,7 @@ var User = new mongoose.Schema({
 	server: String,
 	channel: String,
 	nick: String
-})
+});
 
 var entry = {
 	message: mongoose.model('Message', Message),

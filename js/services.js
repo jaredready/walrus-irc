@@ -143,7 +143,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 			}
 			service.context = nick;
 		}
-	}
+	};
 
 	// Connect to IRC and add listeners
 	var fs = require('fs');
