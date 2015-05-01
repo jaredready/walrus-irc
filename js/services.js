@@ -27,6 +27,15 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 			if(to === service.context) {
 				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			}
+			//Update unread count
+			else {
+				for(var i = 0; i < service.channels.length; i++) {
+					if(service.channels[i].title === to) {
+						service.channels[i].unreadCount++;
+						break;
+					}
+				}
+			}
 			$rootScope.$apply();
 		},
 
@@ -88,7 +97,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		addChannel: function (channel) {
-			service.channels.push({ title: channel, users: [] });
+			service.channels.push({ title: channel, users: [] , unreadCount: 0});
 			service.addUserToChannel(clientConfig.userName, channel);
 			$rootScope.$apply();
 		},
@@ -125,6 +134,12 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 			for(var i = 0; i < service.messages.length; i++) {
 				if(service.messages[i].to === context) {
 					service.context_messages.push(service.messages[i]);
+				}
+			}
+			for(var i = 0; i < service.channels.length; i++) {
+				if(service.channels[i].title === context) {
+					service.channels[i].unreadCount = null;
+					break;
 				}
 			}
 			service.context = context;

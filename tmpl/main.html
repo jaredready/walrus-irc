@@ -40,6 +40,10 @@
         <div ng-controller="channelPaneController" class="panel-group channel-div row col-xs-3" id="channel-accordion" role="tablist">
             <accordion close-others="true">
                 <accordion-group heading="{{channel.title}}" ng-repeat="channel in channels" ng-click="changeContext(channel.title)">
+                    <accordion-heading>
+                        {{channel.title}}
+                        <span class="badge" style="float:right;">{{channel.unreadCount}}</span>
+                    </accordion-heading>
                     <div class="channel-user-list-div">
                         <ul class="channel-user-list">
                             <a class="list-group-item" ng-repeat="nick in channel.users | orderBy:'toString()'">
