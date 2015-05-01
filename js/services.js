@@ -97,7 +97,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		addChannel: function (channel) {
-			service.channels.push({ title: channel, users: [] , unreadCount: 0});
+			service.channels.push({ title: channel, users: [] , unreadCount: null});
 			service.addUserToChannel(clientConfig.userName, channel);
 			$rootScope.$apply();
 		},

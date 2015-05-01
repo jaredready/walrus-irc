@@ -3,7 +3,7 @@
         <tab ng-repeat="network in networks" heading="{{network.title}}" active="tab.active" disabled="tab.disabled" ng-click="changeNetwork(network.title)"></tab>
     </tabset>
     <div class="container-fluid" ng-controller="chatWindowController">
-        <div class="row col-xs-9">
+        <div class="row col-xs-9" style="padding: 0px;">
             <table class="table table-condensed table-hover" id="message-table">
                 <tbody scroll-glue>
                     <tr data-ng-repeat="line in chat">
@@ -37,7 +37,7 @@
             </table>
         </div>
         <!-- This is where joined channels are displayed. Default is an accordion list -->
-        <div ng-controller="channelPaneController" class="panel-group channel-div row col-xs-3" id="channel-accordion" role="tablist">
+        <div ng-controller="channelPaneController" class="panel-group channel-div row col-xs-3" id="channel-accordion" role="tablist" style="padding: 0px;">
             <accordion close-others="true">
                 <accordion-group heading="{{channel.title}}" ng-repeat="channel in channels" ng-click="changeContext(channel.title)">
                     <accordion-heading>
