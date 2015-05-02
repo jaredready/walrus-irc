@@ -3,6 +3,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		nick: "",
 		messages: [],
 		context_messages: [],
+		context_topic: "",
 		channels: [],
 		privateMessagers: [],
 		context: "",
@@ -97,7 +98,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		addChannel: function (channel) {
-			service.channels.push({ title: channel, users: [] , unreadCount: null});
+			service.channels.push({ title: channel, users: [], unreadCount: null, topic: null });
 			service.addUserToChannel(clientConfig.userName, channel);
 			$rootScope.$apply();
 		},
@@ -128,6 +129,21 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 			}
 		},
 
+		setTopic: function (channel, topic) {
+			if(channel === service.context) {
+				service.context_topic = topic;
+				$timeout(function () {
+					$rootScope.$apply();
+				}, 0);
+			}
+			for(var i = 0; i < service.channels.length; i++) {
+				if(service.channels[i].title === channel) {
+					service.channels[i].topic = topic;
+					break;
+				}
+			}
+		},
+
 		changeContext: function (context) {
 			log.info('Changing context to : ', context);
 			service.context_messages.length = 0; //Clears out context_messages
@@ -136,13 +152,14 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 					service.context_messages.push(service.messages[i]);
 				}
 			}
+			service.context = context;
 			for(var i = 0; i < service.channels.length; i++) {
 				if(service.channels[i].title === context) {
 					service.channels[i].unreadCount = null;
+					service.setTopic(context, service.channels[i].topic);
 					break;
 				}
 			}
-			service.context = context;
 		},
 
 		changeToPrivateMessageContext: function (nick) {
@@ -242,6 +259,10 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		service.addUsersToChannel(_nicks, channel);
 		var end = new Date();
 		log.info('NAMES took ', end - start, 'ms.');
+	});
+
+	client.addListener('topic', function (channel, topic, nick, message) {
+		service.setTopic(channel, topic);
 	});
 
 	client.addListener('motd', function (motd) {

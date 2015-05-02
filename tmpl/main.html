@@ -4,6 +4,9 @@
     </tabset>
     <div class="container-fluid" ng-controller="chatWindowController">
         <div class="row col-xs-9" style="padding: 0px;">
+            <div class="well well-sm" ng-model="topic">
+                {{ topic }}
+            </div>
             <table class="table table-condensed table-hover" id="message-table">
                 <tbody scroll-glue>
                     <tr data-ng-repeat="line in chat">

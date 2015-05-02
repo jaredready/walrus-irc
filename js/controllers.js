@@ -19,6 +19,9 @@ walrusIRCApp.controller("networkTabController", ['$scope', 'IRCService',
 
 walrusIRCApp.controller("chatWindowController", ['$scope', 'IRCService',
     function($scope, IRCService) {
+    	$scope.$watch(function () { return IRCService.context_topic; }, function (context_topic) {
+			$scope.topic = context_topic;
+		});
 		$scope.chat = IRCService.context_messages;
 
 		$scope.changeContext = function (context) {
@@ -35,7 +38,7 @@ walrusIRCApp.controller("channelPaneController", ['$scope', 'IRCService',
 
 walrusIRCApp.controller("privateMessageController", ['$scope', 'IRCService',
 	function($scope, IRCService) {
-		$scope.$watch(function () { return IRCService.privateMessagers; }, function (nick) {
+		$scope.$watch(function () { return IRCService.privateMessagers; }, function (privateMessagers) {
 			$scope.privateMessagers = IRCService.privateMessagers;
 		});
 		$scope.changePMContext = function(nick) {
