@@ -153,6 +153,12 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 				}
 			}
 			service.context = context;
+			if(context === 'Freenode') {
+				service.context_topic = "";
+				$timeout(function () {
+					$rootScope.$apply();
+				}, 0);
+			}
 			for(var i = 0; i < service.channels.length; i++) {
 				if(service.channels[i].title === context) {
 					service.channels[i].unreadCount = null;
