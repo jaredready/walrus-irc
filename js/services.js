@@ -269,6 +269,7 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 
 	client.addListener('topic', function (channel, topic, nick, message) {
 		service.setTopic(channel, topic);
+		service.addMessage(nick, channel, +new Date(), nick + ' has set the topic: ' + topic, 'topic');
 	});
 
 	client.addListener('motd', function (motd) {
