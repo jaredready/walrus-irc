@@ -10,7 +10,7 @@
   "license": "BSD-2-Clause",
   "window": {
     "title": "Walrus IRC",
-    "toolbar": true,
+    "toolbar": false,
     "frame": true,
     "width": 770,
     "min_width": 775,

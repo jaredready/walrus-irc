@@ -9,15 +9,22 @@ var help = new gui.MenuItem({ label: 'Help' });
 // File submenus
 var file_submenu = new gui.Menu();
 file_submenu.append(new gui.MenuItem({
+	label: 'Lock'
+}));
+file_submenu.append(new gui.MenuItem({
 	label: 'Quit',
 	click: function() {
 		gui.Window.get().close();
 	}
 }));
-file_submenu.append(new gui.MenuItem({
-	label: 'Lock'
-}));
 file.submenu = file_submenu;
+
+// Edit submenus
+var edit_submenu = new gui.Menu();
+edit_submenu.append(new gui.MenuItem({
+	label: 'Preferences'
+}));
+edit.submenu = edit_submenu;
 
 // Help submenus
 var help_submenu = new gui.Menu();

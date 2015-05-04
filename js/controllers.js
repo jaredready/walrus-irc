@@ -2,6 +2,10 @@ walrusIRCApp.controller("walrusController", function ($scope) {
 	
 });
 
+walrusIRCApp.controller("preferencesController", function ($scope) {
+	
+});
+
 walrusIRCApp.controller("networkTabController", ['$scope', 'IRCService',
 	function($scope, IRCService) {
 		// This is just an example. Multiple network connectivity is not yet implemented.
