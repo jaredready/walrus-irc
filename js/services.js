@@ -1,3 +1,5 @@
+var entry = require('./js/db.js');
+
 walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootScope, $timeout) {
 	var service = {
 		nick: "",
@@ -24,6 +26,8 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 		},
 
 		addMessage: function (from, to, time, message, type, options) {
+			var msg = new entry.message({ nick: from, to: to, message: message, time: time, type: 'message', message_options: options });
+			msg.save();
 			service.messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
 			if(to === service.context) {
 				service.context_messages.push({ nick: from, to: to, message: message, time: time, type: type, options: options });
@@ -186,7 +190,6 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 	// Connect to IRC and add listeners
 	var fs = require('fs');
 	var log = require('winston');
-	var entry = require('./js/db.js');
 	var IRClient = require('irc').Client;
 
 	var clientConfig = JSON.parse(fs.readFileSync('client.json'), 'utf8');
@@ -198,8 +201,6 @@ walrusIRCApp.factory('IRCService', [ '$rootScope', '$timeout', function ($rootSc
 	client.addListener('message', function (nick, to, text) {
 		// Don't handle pm here
 		if(to === clientConfig.userName) return;
-		var msg = new entry.message({ nick: nick, to: to, message: text, time: +new Date(), type: 'message' });
-		msg.save();
 		var foundGist = text.match('https:\/\/gist.github.com/[A-Za-z0-9]+\/.+');
 		if(foundGist) {
 			var gistId = foundGist[0].split('/').pop();

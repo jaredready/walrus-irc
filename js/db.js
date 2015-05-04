@@ -6,7 +6,8 @@ var Message = new mongoose.Schema({
 	to: String,
 	message: String,
 	time: Number,
-	type: String
+	type: String,
+	message_options: []
 });
 
 var Channel = new mongoose.Schema({
