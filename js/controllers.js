@@ -1,6 +1,8 @@
-walrusIRCApp.controller("walrusController", function ($scope) {
+walrusIRCApp.controller("walrusController", ['$scope', 'menuService',
+	function ($scope, menuService) {
 	
-});
+	}
+]);
 
 walrusIRCApp.controller("preferencesController", function ($scope) {
 	
