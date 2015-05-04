@@ -23,7 +23,14 @@ walrusIRCApp.factory('menuService', ['$modal', '$timeout', function ($modal, $ti
 	// Edit submenus
 	var edit_submenu = new gui.Menu();
 	edit_submenu.append(new gui.MenuItem({
-		label: 'Preferences'
+		label: 'Preferences',
+		click: function() {
+			var preferences_modal = $modal.open({
+				animation: true,
+				templateUrl: 'tmpl/preferences.html',
+				controller: 'preferencesController'
+			});
+		}
 	}));
 	edit.submenu = edit_submenu;
 

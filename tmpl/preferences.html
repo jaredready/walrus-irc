@@ -1,25 +1,26 @@
 <div ng-controller="preferencesController">
-    <script type="text/ng-template" id="preferences.html">
-        <div class="modal-header">
-            <h3 class="modal-title">I'm a modal!</h3>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a ng-click="selected.item = item">{{ item }}</a>
-                </li>
-            </ul>
-            Selected: <b>{{ selected.item }}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
-
-    <button class="btn btn-default" ng-click="open()">Open me!</button>
-    <button class="btn btn-default" ng-click="open('lg')">Large modal</button>
-    <button class="btn btn-default" ng-click="open('sm')">Small modal</button>
-    <button class="btn btn-default" ng-click="toggleAnimation()">Toggle Animation ({{ animationsEnabled }})</button>
-    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
+    <div class="modal-header">
+        <h4 class="modal-title">Preferences</h4>
+    </div>
+    <div class="modal-body">
+        <tabset>
+            <tab heading="Account Settings">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="nick">Nick</label>
+                        <input type="text" class="form-control" id="nick" placeholder="JaneDoe">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                </form>
+            </tab>
+            <tab heading="Network Settings"></tab>
+        </tabset>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary">OK</button>
+        <button class="btn btn-warning">Cancel</button>
+    </div>
 </div>
